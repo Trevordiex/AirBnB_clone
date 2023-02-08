@@ -77,7 +77,6 @@ class HBNBCommand(cmd.Cmd):
                 all_obj.pop(key)
                 storage.save()
 
-
     def do_all(self, arg):
         """
             Prints all string representation of all instances
@@ -92,5 +91,7 @@ class HBNBCommand(cmd.Cmd):
             obj = all_objs[i]
             models.append(obj)
         print(models)
+
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
