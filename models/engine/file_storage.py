@@ -57,7 +57,7 @@ class FileStorage:
         if not obj:
             return
         key = f'{obj.__class__.__name__}.{obj.id}'
-        self.__objects[key] = obj.to_dict()
+        self.__objects[key] = str(obj)
 
     def save(self):
         '''serializes ``__objects`` to ``__file_path``'''
