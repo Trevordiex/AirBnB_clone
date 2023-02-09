@@ -82,9 +82,10 @@ class HBNBCommand(cmd.Cmd):
             Prints all string representation of all instances
             based or not on the class name
         """
-        if arg != "BaseModel":
-            print("** class doesn't exist **")
-            return
+        if arg:
+            if arg != "BaseModel":
+                print("** class doesn't exist **")
+                return
         models = []
         all_objs = storage.all()
         for i in all_objs.keys():
@@ -92,6 +93,31 @@ class HBNBCommand(cmd.Cmd):
             models.append(obj)
         print(models)
 
+    def do_update(self, arg):
+        """Updates an instance based on the class name and id
+           by adding or updating attribute and save the changes
+        """
+        if not arg:
+            print("** class name missing **")
+            return
+        args = arg.split()
+        if args[0] != "BaseModel":
+            print("** class doesn't exist **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+            return
+        key = f'{args[0]}.{args[1]}'
+        all_obj = storage.all()
+        if key not in all_obj:
+            print("** no instance found **")
+        elif len(args) < 3:
+           print("** attribute name missing **")
+        elif len(args) < 4:
+           print("** value missing **")
+        else:
+            obj = all_obj[key]
+            obj = json.loads(obj)
+            print(obj)
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
