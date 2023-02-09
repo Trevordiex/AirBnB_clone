@@ -57,16 +57,19 @@ class FileStorage:
         if not obj:
             return
         key = f'{obj.__class__.__name__}.{obj.id}'
-        self.__objects[key] = str(obj)
+        self.__objects[key] = obj
 
     def save(self):
         '''serializes ``__objects`` to ``__file_path``'''
+        str_dict = {key: value.to_dict() for key, value in self.__objects.items()}
         with open(self.__file_path, 'w') as f:
-            json.dump(self.__objects, f)
+            json.dump(str_dict, f)
 
     def reload(self):
         '''reloads objects from ``__file_path`` using json'''
+        from models.base_model import BaseModel
         if not os.path.exists(self.__file_path):
             return
         with open(self.__file_path) as f:
-            self.__objects = json.load(f)
+            str_dict = json.load(f)
+            self.__objects = {key: BaseModel(**value) for key, value in str_dict.items()}
