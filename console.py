@@ -3,6 +3,7 @@
 '''
 
 import cmd
+import re
 import json
 from models.base_model import BaseModel
 from models.user import User
@@ -15,7 +16,7 @@ from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
     indentchars = 4
     models = {
         "BaseModel": BaseModel,
@@ -139,6 +140,51 @@ class HBNBCommand(cmd.Cmd):
             value = args[3].strip('"')
             setattr(obj, args[2], value)
             obj.save()
+
+    def default(self, line):
+        '''when command is not defined explicitly'''
+        args = line.split(".", maxsplit=1)
+        klas = args[0]
+        if klas in self.models:
+            command = args[1]
+            if command == "all()":
+                return self.do_all(klas)
+            elif command == "count()":
+                total = len([value for key, value in storage.all().items() if key.startswith(f'{klas}.')])
+                print(total)
+            elif command.startswith('show('):
+                print(command)
+                m = re.search(r'show\((?P<argument>[^)]*)\)', command)
+                parsed_args = f"{klas} {m.group('argument')}"
+                return self.do_show(parsed_args)
+            elif command.startswith('destroy('):
+                m = re.search(r'destroy\((?P<argument>[^)]*)\)', command)
+                parsed_args = f"{klas} {m.group('argument')}"
+                return self.do_destroy(parsed_args)
+            elif command.startswith('update('):
+                m = re.search(r'update\((?P<argument>[^)]*)\)', command)
+                # split the matched string into two. first string is the id
+                # second string is the rest of the argument
+                parsed_args = m.group('argument')
+                parsed_args = [s.strip(" ") for s in parsed_args.split(",", maxsplit=1)]
+                if len(parsed_args) < 2:
+                    print('** incomplete argument **')
+                    return
+                instance_id = parsed_args[0]
+                parsed_args = parsed_args[1]
+                if parsed_args.startswith("{"):
+                    parsed_args = parsed_args.replace("'", '"')
+                    arg_dict = json.loads(parsed_args)
+                    for key, value in arg_dict.items():
+                        self.do_update(f"{klas} {instance_id} {key} {value}")
+                else:
+                    key_val_string = " ".join(parsed_args.split(","))
+                    self.do_update(f"{klas} {instance_id}" + " " + key_val_string)
+            else:
+                print(f"** unsupported command: {command}")
+
+        else:
+            super().default(line)
 
 
 if __name__ == '__main__':
