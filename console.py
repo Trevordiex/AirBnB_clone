@@ -37,6 +37,7 @@ class HBNBCommand(cmd.Cmd):
             new = User()
         else:
             print("** class doesn't exist **")
+            return
         new.save()
         print(new.id)
 
