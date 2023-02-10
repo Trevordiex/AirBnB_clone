@@ -69,8 +69,25 @@ class FileStorage:
         '''reloads objects from ``__file_path`` using json'''
         from models.base_model import BaseModel
         from models.user import User
+        from models.amenity import Amenity
+        from models.city import City
+        from models.place import Place
+        from models.review import Review
+        from models.state import State
+
+        models = {
+            "BaseModel": BaseModel,
+            "User": User,
+            "City": City,
+            "Amenity": Amenity,
+            "Place": Place,
+            "Review": Review,
+            "State": State
+        }
         if not os.path.exists(self.__file_path):
             return
         with open(self.__file_path) as f:
             str_dict = json.load(f)
-            self.__objects = {key: BaseModel(**value) for key, value in str_dict.items()}
+            for key, value in str_dict.items():
+                model = key.split(".")[0]
+                self.__objects[key] = models[model](**value)
