@@ -1,13 +1,14 @@
 #!/usr/bin/python3
-'''A module for User class that 
+'''A module for User class that
    inherits from BaseModel
 '''
 
 from models.base_model import BaseModel
 
+
 class User(BaseModel):
     '''a class User that inherits from BaseModel
-    
+    ...
     Attributes
     ----------
     email : str
