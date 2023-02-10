@@ -5,12 +5,14 @@
 import cmd
 import json
 from models.base_model import BaseModel
+from models.user import User
 from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb)"
     indentchars = 4
+    models = ["BaseModel", "User"]
 
     def emptyline(self):
         """Method called when an empty line is entered in response to prompt"""
@@ -31,10 +33,12 @@ class HBNBCommand(cmd.Cmd):
             return
         if arg == "BaseModel":
             new = BaseModel()
-            new.save()
-            print(new.id)
+        elif arg == "User":
+            new = User()
         else:
             print("** class doesn't exist **")
+        new.save()
+        print(new.id)
 
     def do_show(self, arg):
         """Prints the string representation of an instance based on
@@ -44,7 +48,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         args = arg.split()
-        if args[0] != "BaseModel":
+        if args[0] not in models:
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("** instance id missing **")
@@ -64,7 +68,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         args = arg.split()
-        if args[0] != "BaseModel":
+        if args[0] not in models:
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("** instance id missing **")
@@ -83,15 +87,15 @@ class HBNBCommand(cmd.Cmd):
             based or not on the class name
         """
         if arg:
-            if arg != "BaseModel":
+            if arg not in models:
                 print("** class doesn't exist **")
                 return
-        models = []
+        mods = []
         all_objs = storage.all()
         for i in all_objs.keys():
             obj = all_objs[i]
-            models.append(obj)
-        print(models)
+            mods.append(str(obj))
+        print(mods)
 
     def do_update(self, arg):
         """Updates an instance based on the class name and id
@@ -101,7 +105,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         args = arg.split()
-        if args[0] != "BaseModel":
+        if args[0] not in models:
             print("** class doesn't exist **")
         elif len(args) < 2:
             print("** instance id missing **")
@@ -111,13 +115,15 @@ class HBNBCommand(cmd.Cmd):
         if key not in all_obj:
             print("** no instance found **")
         elif len(args) < 3:
-           print("** attribute name missing **")
+            print("** attribute name missing **")
         elif len(args) < 4:
-           print("** value missing **")
+            print("** value missing **")
         else:
             obj = all_obj[key]
-            obj = json.loads(obj)
-            print(obj)
+            value = args[3].strip('"')
+            setattr(obj, args[2], value)
+            obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

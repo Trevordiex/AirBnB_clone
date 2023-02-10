@@ -68,6 +68,7 @@ class FileStorage:
     def reload(self):
         '''reloads objects from ``__file_path`` using json'''
         from models.base_model import BaseModel
+        from models.user import User
         if not os.path.exists(self.__file_path):
             return
         with open(self.__file_path) as f:
