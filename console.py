@@ -47,8 +47,8 @@ class HBNBCommand(cmd.Cmd):
         if arg not in self.models:
             print("** class doesn't exist **")
             return
-        
-        new = self.models[arg]()    
+
+        new = self.models[arg]()
         new.save()
         print(new.id)
 
@@ -67,7 +67,7 @@ class HBNBCommand(cmd.Cmd):
         elif len(args) < 2:
             print("** instance id missing **")
             return
-        
+
         all_obj = storage.all()
         key = f'{args[0]}.{args[1]}'
         if key in all_obj:
@@ -106,8 +106,9 @@ class HBNBCommand(cmd.Cmd):
             if arg not in self.models:
                 print("** class doesn't exist **")
                 return
+            items = storage.all().items()
             mods = [
-                str(value) for key, value in storage.all().items() if key.startswith(f'{arg}.')
+                str(value) for key, value in items if key.startswith(f'{arg}.')
             ]
         else:
             mods = [str(obj) for obj in storage.all().values()]
@@ -150,7 +151,10 @@ class HBNBCommand(cmd.Cmd):
             if command == "all()":
                 return self.do_all(klas)
             elif command == "count()":
-                total = len([value for key, value in storage.all().items() if key.startswith(f'{klas}.')])
+                total = len([
+                    value for key, value in storage.all().items()
+                    if key.startswith(f'{klas}.')
+                    ])
                 print(total)
             elif command.startswith('show('):
                 print(command)
@@ -166,7 +170,10 @@ class HBNBCommand(cmd.Cmd):
                 # split the matched string into two. first string is the id
                 # second string is the rest of the argument
                 parsed_args = m.group('argument')
-                parsed_args = [s.strip(" ") for s in parsed_args.split(",", maxsplit=1)]
+                parsed_args = [
+                    s.strip(" ")
+                    for s in parsed_args.split(",", maxsplit=1)
+                ]
                 if len(parsed_args) < 2:
                     print('** incomplete argument **')
                     return
@@ -179,7 +186,9 @@ class HBNBCommand(cmd.Cmd):
                         self.do_update(f"{klas} {instance_id} {key} {value}")
                 else:
                     key_val_string = " ".join(parsed_args.split(","))
-                    self.do_update(f"{klas} {instance_id}" + " " + key_val_string)
+                    self.do_update(
+                        f"{klas} {instance_id}" + " " + key_val_string
+                    )
             else:
                 print(f"** unsupported command: {command}")
 
