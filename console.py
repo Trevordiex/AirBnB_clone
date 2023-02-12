@@ -157,7 +157,6 @@ class HBNBCommand(cmd.Cmd):
                     ])
                 print(total)
             elif command.startswith('show('):
-                print(command)
                 m = re.search(r'show\((?P<argument>[^)]*)\)', command)
                 parsed_args = f"{klas} {m.group('argument')}"
                 return self.do_show(parsed_args)
