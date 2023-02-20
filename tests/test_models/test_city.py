@@ -10,6 +10,7 @@ class CityTestCase(TestCase):
     def setUp(self):
         '''initializes a city instance'''
         self.city = City()
+
     def test_is_subclass(self):
         '''checks that instance is from ``BaseModel``'''
         self.assertIsInstance(self.city, BaseModel)
